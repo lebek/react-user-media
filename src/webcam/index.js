@@ -160,8 +160,7 @@ class Webcam extends Component {
     const wrapperStyle = {
       width,
       height,
-      overflow: "hidden",
-      position: "relative"
+      overflow: "hidden"
     };
     const videoStyle = {
       left: width / 2.0 - focusX * width * zoom,

@@ -62,11 +62,11 @@ class Examples extends React.Component {
       : null;
 
     const btnLabel = this.state.mounted ? "Unmount Webcam" : "Mount Webcam";
-
+    const containerStyle = { position: "relative" };
     return (
       <div>
         <button onClick={this.toggleMount.bind(this)}>{btnLabel}</button>
-        <div>
+        <div style={containerStyle}>
           {webcam}
           <button onClick={this.decZoom.bind(this)}>-</button>
           <button onClick={this.incZoom.bind(this)}>+</button>
