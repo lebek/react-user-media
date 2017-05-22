@@ -130,7 +130,7 @@ class Webcam extends Component {
     if (hasUserMedia && userMediaRequested) {
       const canvas = this._getCanvas();
       const ctx = canvas.getContext("2d");
-
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(
         this._video,
         width / 2.0 - focusX * width * zoom,
@@ -168,7 +168,7 @@ class Webcam extends Component {
       top: height / 2.0 - focusY * height * zoom,
       position: "absolute"
     };
-    console.log(width, zoom, focusX, width / 2.0 - focusX * width * zoom);
+
     return (
       <div style={wrapperStyle}>
         <video
