@@ -1,6 +1,6 @@
 {
   "name": "@lebek/react-user-media",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "React components for webcam and audio",
   "main": "build/react-user-media.js",
   "scripts": {
