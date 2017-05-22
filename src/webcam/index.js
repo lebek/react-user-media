@@ -5,13 +5,9 @@ class Webcam extends Component {
     audio: PropTypes.bool,
     width: PropTypes.number,
     height: PropTypes.number,
-    captureFormat: PropTypes.oneOf([
-      "image/png",
-      "image/jpeg",
-      "image/webp"
-    ]),
+    captureFormat: PropTypes.oneOf(["image/png", "image/jpeg", "image/webp"]),
     onSuccess: PropTypes.func,
-    onFailure: PropTypes.func,
+    onFailure: PropTypes.func
   };
 
   static defaultProps = {
@@ -20,11 +16,11 @@ class Webcam extends Component {
     width: 640,
     height: 480,
     captureFormat: "image/png",
-    onSuccess: (() => {}),
-    onFailure: ((error) => {
+    onSuccess: () => {},
+    onFailure: error => {
       console.error("An error occured while requesting user media");
-      throw(error);
-    }),
+      throw error;
+    }
   };
 
   static _mediaStream = null;
@@ -59,7 +55,8 @@ class Webcam extends Component {
   }
 
   componentWillUnmount() {
-    this._mediaStream && this._mediaStream.getTracks().forEach((track) => track.stop());
+    this._mediaStream &&
+      this._mediaStream.getTracks().forEach(track => track.stop());
   }
 
   //---------------------------------------------------------------------------
@@ -67,30 +64,26 @@ class Webcam extends Component {
   //---------------------------------------------------------------------------
 
   _hasGetUserMedia() {
-    return !!(
-      navigator.getUserMedia ||
+    return !!(navigator.getUserMedia ||
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia
-    );
+      navigator.msGetUserMedia);
   }
 
   _requestUserMedia() {
-    navigator.getUserMedia = (
-      navigator.getUserMedia ||
+    navigator.getUserMedia = navigator.getUserMedia ||
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia
-    );
+      navigator.msGetUserMedia;
 
     const constraints = {
       video: this.props.video,
-      audio: this.props.audio,
+      audio: this.props.audio
     };
 
     navigator.getUserMedia(
       constraints,
-      (stream) => {
+      stream => {
         const video = this._video;
 
         if (window.URL) {
@@ -108,11 +101,10 @@ class Webcam extends Component {
 
         this.props.onSuccess();
       },
-      (error) => {
+      error => {
         this.props.onFailure(error);
       }
     );
-
   }
 
   _getCanvas() {
@@ -133,13 +125,19 @@ class Webcam extends Component {
 
   captureCanvas() {
     const { hasUserMedia, userMediaRequested } = this.state;
-    const { width, height } = this.props;
+    const { width, height, zoom, focusX, focusY } = this.props;
 
     if (hasUserMedia && userMediaRequested) {
       const canvas = this._getCanvas();
       const ctx = canvas.getContext("2d");
 
-      ctx.drawImage(this._video, 0, 0, width, height);
+      ctx.drawImage(
+        this._video,
+        width / 2.0 - focusX * width * zoom,
+        height / 2.0 - focusY * height * zoom,
+        width * zoom,
+        height * zoom
+      );
 
       return canvas;
     }
@@ -147,7 +145,7 @@ class Webcam extends Component {
 
   captureScreenshot() {
     const { captureFormat } = this.props;
-    const canvas = this.captureCanvas()
+    const canvas = this.captureCanvas();
     if (canvas) {
       return canvas.toDataURL(captureFormat);
     }
@@ -158,18 +156,31 @@ class Webcam extends Component {
   //---------------------------------------------------------------------------
 
   render() {
-    const { width, height } = this.props;
-
+    const { width, height, zoom, focusX, focusY } = this.props;
+    const wrapperStyle = {
+      width,
+      height,
+      overflow: "hidden",
+      position: "relative"
+    };
+    const videoStyle = {
+      left: width / 2.0 - focusX * width * zoom,
+      top: height / 2.0 - focusY * height * zoom,
+      position: "absolute"
+    };
+    console.log(width, zoom, focusX, width / 2.0 - focusX * width * zoom);
     return (
-      <video
-        width={width}
-        height={height}
-        ref={(component) => this._video = component}
-        autoPlay
-      />
-    )
+      <div style={wrapperStyle}>
+        <video
+          style={videoStyle}
+          width={width * zoom}
+          height={height * zoom}
+          ref={component => this._video = component}
+          autoPlay
+        />
+      </div>
+    );
   }
-
-};
+}
 
 export default Webcam;
