@@ -156,7 +156,7 @@ class Webcam extends Component {
   //---------------------------------------------------------------------------
 
   render() {
-    const { width, height, zoom, focusX, focusY } = this.props;
+    const { width, height, zoom, focusX, focusY, ...props } = this.props;
     const wrapperStyle = {
       width,
       height,
@@ -170,7 +170,7 @@ class Webcam extends Component {
     };
 
     return (
-      <div style={wrapperStyle}>
+      <div style={wrapperStyle} {...props}>
         <video
           style={videoStyle}
           width={width * zoom}
