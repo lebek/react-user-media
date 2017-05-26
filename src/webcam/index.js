@@ -15,6 +15,10 @@ class Webcam extends Component {
     video: true,
     width: 640,
     height: 480,
+    clockwiseRotations: 0,
+    zoom: 1,
+    focusX: 0.5,
+    focusY: 0.5,
     captureFormat: "image/png",
     onSuccess: () => {},
     onFailure: error => {
@@ -108,10 +112,6 @@ class Webcam extends Component {
   }
 
   _getCanvas() {
-    if (this._captureCanvas) {
-      return this._captureCanvas;
-    }
-
     this._captureCanvas = document.createElement("canvas");
     this._captureCanvas.width = this.props.width;
     this._captureCanvas.height = this.props.height;
@@ -125,11 +125,35 @@ class Webcam extends Component {
 
   captureCanvas() {
     const { hasUserMedia, userMediaRequested } = this.state;
-    const { width, height, zoom, focusX, focusY } = this.props;
+    const {
+      width,
+      height,
+      zoom,
+      focusX,
+      focusY,
+      clockwiseRotations
+    } = this.props;
 
     if (hasUserMedia && userMediaRequested) {
       const canvas = this._getCanvas();
       const ctx = canvas.getContext("2d");
+
+      if (clockwiseRotations % 4 === 0) {
+      } else if (clockwiseRotations % 4 === 1) {
+        canvas.width = height;
+        canvas.height = width;
+        ctx.translate(canvas.width, 0);
+        ctx.rotate(Math.PI / 2.0);
+      } else if (clockwiseRotations % 4 === 2) {
+        ctx.translate(canvas.width, canvas.height);
+        ctx.rotate(Math.PI);
+      } else if (clockwiseRotations % 4 === 3) {
+        canvas.width = height;
+        canvas.height = width;
+        ctx.translate(0, canvas.height);
+        ctx.rotate(3 * Math.PI / 2.0);
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(
         this._video,

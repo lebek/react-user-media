@@ -57,6 +57,7 @@ class Examples extends React.Component {
           zoom={this.state.zoomLevel}
           focusX={this.state.focusX}
           focusY={this.state.focusY}
+          clockwiseRotations={0}
           audio={false}
         />
       : null;
